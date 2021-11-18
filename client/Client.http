@@ -1,0 +1,7 @@
+### Send POST request with json body
+POST http://YWRtaW46YWRtaW4=@localhost:8035/create
+Content-Type: application/json
+
+{
+  "full_link":"https://mail.ru/"
+}
