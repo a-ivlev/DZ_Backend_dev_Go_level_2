@@ -1,13 +1,14 @@
 package inmemoryDB
 
 import (
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/app/followingBL"
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/google/uuid"
 	"sync"
 	"time"
+
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/app/followingBL"
+	"github.com/google/uuid"
 )
 
 var ErrorNotFoundElement = errors.New("в БД нет такой позиции")
