@@ -2,15 +2,14 @@ package main
 
 import (
 	"context"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/api/router"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/api/server"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/shortenerBL"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/starter"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/db/inmemoryDB"
 	"os"
 	"os/signal"
 	"sync"
-
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/api/router"
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/api/server"
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/app/shortenerBL"
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/app/starter"
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/db/inmemoryDB"
 )
 
 func main() {

@@ -2,9 +2,8 @@ package starter
 
 import (
 	"context"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/shortenerBL"
 	"sync"
-
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/app/shortenerBL"
 )
 
 type App struct {

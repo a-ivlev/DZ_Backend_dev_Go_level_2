@@ -3,12 +3,11 @@ package shortenerBL
 import (
 	"context"
 	"fmt"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/followingBL"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/db/inmemoryDB"
 	"log"
 	"strings"
 	"time"
-
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/app/followingBL"
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/db/inmemoryDB"
 
 	"github.com/google/uuid"
 )

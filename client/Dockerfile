@@ -5,12 +5,12 @@ WORKDIR /app
 
 # Копируем файлы go.mod и go.sum и делаем загрузку, чтобы вовремя пересборки контейнера зависимости
 # подтягивались из слоёв.
-COPY go.mod .
-COPY go.sum .
+COPY ../go.mod .
+COPY ../go.sum .
 RUN go mod download
 
 # Копируем все файлы из директории ./shortener локальной машины в директорию /app/shortener образа.
-COPY ./shortener ./shortener
+COPY ../shortener ./shortener
 
 # Запускаем компиляцию программы на go и сохраняем полученный бинарный файл server в директорию /rental/ образа.
 #RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ../rental/server .
@@ -48,8 +48,8 @@ WORKDIR /app
 
 # Копируем файлы go.mod и go.sum и делаем загрузку, чтобы вовремя пересборки контейнера зависимости
 # подтягивались из слоёв.
-COPY go.mod .
-COPY go.sum .
+COPY ../go.mod .
+COPY ../go.sum .
 RUN go mod download
 
 # Копируем все файлы из директории ./shortener локальной машины в текущую директорию (shortener) образа.

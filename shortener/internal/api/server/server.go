@@ -2,11 +2,10 @@ package server
 
 import (
 	"context"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/shortenerBL"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/starter"
 	"net/http"
 	"time"
-
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/app/shortenerBL"
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/app/starter"
 )
 
 var _ starter.APIServer = &Server{}

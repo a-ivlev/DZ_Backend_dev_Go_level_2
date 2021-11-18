@@ -3,10 +3,9 @@ package router
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/shortenerBL"
 	"net/http"
 	"time"
-
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/app/shortenerBL"
 )
 
 type Router struct {

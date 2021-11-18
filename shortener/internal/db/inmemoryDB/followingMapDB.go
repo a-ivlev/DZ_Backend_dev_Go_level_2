@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/followingBL"
 	"sync"
 	"time"
 
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/shortener/internal/app/followingBL"
 	"github.com/google/uuid"
 )
 
