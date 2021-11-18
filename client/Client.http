@@ -5,3 +5,29 @@ Content-Type: application/json
 {
   "full_link":"https://mail.ru/"
 }
+
+### Send POST request with json body
+POST http://localhost:8035/create
+Content-Type: application/json
+
+{
+  "full_link":"https://yandex.ru/"
+}
+
+###
+GET http://localhost:8035/-/4AA88C41
+
+###
+#GET http://localhost:8035/stat/1f44b569210f42c0af57c9d88dc24b11
+
+###
+POST http://localhost:8035/stat
+Content-Type: application/json
+
+{
+  "statistic_link":"625053f7f7b041b2bd4f04e587d29576"
+}
+
+### mail.ru
+GET http://localhost:8080/
+

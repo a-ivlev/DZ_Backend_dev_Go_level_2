@@ -1,19 +1,27 @@
 package main
 
 import (
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/client/internal/handlers"
+	"CourseProjectBackendDevGoLevel-1/client/internal/handlers"
+	"github.com/go-chi/chi/v5"
+
 	"log"
 	"net/http"
 	"os"
 )
 
 func main() {
-	port := os.Getenv("SHORT_CLI_PORT")
-	if port == "" {
-		port = "8080"
+	cliPort := os.Getenv("CLI_PORT")
+	if cliPort == "" {
+		log.Fatal("unknown CLI_PORT = ", cliPort)
 	}
-	http.HandleFunc("/", handlers.HomePage)
-	err := http.ListenAndServe(":"+port, nil)
+
+	r := chi.NewRouter()
+	r.Get("/", handlers.HomePage)
+	r.Post("/", handlers.HomePage)
+	r.Get("/{short}", handlers.RedirectPage)
+	r.Get("/stat/{stat}", handlers.StatPage)
+
+	err := http.ListenAndServe(":"+cliPort, r)
 	if err != nil {
 		log.Println("Client shortener stopped...")
 	}

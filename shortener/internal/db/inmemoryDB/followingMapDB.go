@@ -1,17 +1,16 @@
 package inmemoryDB
 
 import (
+	"CourseProjectBackendDevGoLevel-1/shortener/internal/app/repository/followingBL"
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/followingBL"
-	"sync"
-	"time"
-
 	"github.com/google/uuid"
+	"strings"
+	"sync"
 )
 
-var ErrorNotFoundElement = errors.New("в БД нет такой позиции")
+var ErrorNotFound = errors.New("error not found")
 
 var _ followingBL.FollowingStore = &followingMapDB{}
 
@@ -26,7 +25,7 @@ func NewFollowingMapDB() *followingMapDB {
 	}
 }
 
-func (fldb *followingMapDB) CreateFollowing(ctx context.Context, followingList followingBL.Following) (*followingBL.Following, error) {
+func (fldb *followingMapDB) CreateFollow(ctx context.Context, following followingBL.Following) (*followingBL.Following, error) {
 	fldb.Lock()
 	defer fldb.Unlock()
 
@@ -35,11 +34,12 @@ func (fldb *followingMapDB) CreateFollowing(ctx context.Context, followingList f
 		return nil, ctx.Err()
 	default:
 	}
-	fldb.followingDB[followingList.ID] = followingList
-	return &followingList, nil
+
+	fldb.followingDB[following.ID] = following
+	return &following, nil
 }
 
-func (fldb *followingMapDB) ReadFollowing(ctx context.Context, following followingBL.Following) (*followingBL.Following, error) {
+func (fldb *followingMapDB) ReadFollow(ctx context.Context, uid uuid.UUID) (*followingBL.Following, error) {
 	fldb.Lock()
 	defer fldb.Unlock()
 
@@ -48,17 +48,14 @@ func (fldb *followingMapDB) ReadFollowing(ctx context.Context, following followi
 		return nil, ctx.Err()
 	default:
 	}
-
-	for _, readFollowing := range fldb.followingDB {
-		if following.ShortenerID == readFollowing.ShortenerID && following.IPaddress == readFollowing.IPaddress {
-			return &readFollowing, nil
-		}
+	u, ok := fldb.followingDB[uid]
+	if ok {
+		return &u, nil
 	}
-
 	return nil, sql.ErrNoRows
 }
 
-func (fldb *followingMapDB) UpdateFollowing(ctx context.Context, following followingBL.Following) (*followingBL.Following, error) {
+func (fldb *followingMapDB) UpdateFollow(ctx context.Context, following followingBL.Following) (*followingBL.Following, error) {
 	fldb.Lock()
 	defer fldb.Unlock()
 
@@ -69,7 +66,7 @@ func (fldb *followingMapDB) UpdateFollowing(ctx context.Context, following follo
 	}
 
 	if _, ok := fldb.followingDB[following.ID]; !ok {
-		return nil, ErrorNotFoundElement
+		return nil, ErrorNotFound
 	}
 
 	fldb.followingDB[following.ID] = following
@@ -77,66 +74,27 @@ func (fldb *followingMapDB) UpdateFollowing(ctx context.Context, following follo
 	return &following, nil
 }
 
-func (fldb *followingMapDB) GetFollowingList(ctx context.Context, following followingBL.Following) (chan followingBL.Following, error) {
-	chout := make(chan followingBL.Following, 100)
+//func (fldb *followingMapDB) DeleteFollow(ctx context.Context, uid uuid.UUID) (*followingBL.Following, error) {
+//	fldb.Lock()
+//	defer fldb.Unlock()
+//
+//	select {
+//	case <-ctx.Done():
+//		return nil, ctx.Err()
+//	default:
+//	}
+//
+//	if _, ok := fldb.followingDB[uid]; !ok {
+//		return nil, errors.New("в БД нет такой позиции")
+//	}
+//
+//	deleteFollowingList := fldb.followingDB[uid]
+//	delete(fldb.followingDB, uid)
+//	return &deleteFollowingList, nil
+//}
 
-	go func() {
-		defer close(chout)
-		fldb.Lock()
-		defer fldb.Unlock()
-		for _, followingItem := range fldb.followingDB {
-			if followingItem.ShortenerID == following.ShortenerID {
-				select {
-				case <-ctx.Done():
-					return
-				case <-time.After(2 * time.Second):
-					return
-				case chout <- followingItem:
-				}
-			}
-		}
-	}()
 
-	return chout, nil
-
-	//fldb.Lock()
-	//defer fldb.Unlock()
-	//
-	//select {
-	//case <-ctx.Done():
-	//	return nil, ctx.Err()
-	//default:
-	//}
-	//
-	//for _, readFollowing := range fldb.followingListDB {
-	//	if following.ShortenerID == readFollowing.ShortenerID {
-	//		return &readFollowing, nil
-	//	}
-	//}
-	//
-	//return nil, sql.ErrNoRows
-}
-
-func (fldb *followingMapDB) DeleteFollowing(ctx context.Context, uid uuid.UUID) (*followingBL.Following, error) {
-	fldb.Lock()
-	defer fldb.Unlock()
-
-	select {
-	case <-ctx.Done():
-		return nil, ctx.Err()
-	default:
-	}
-
-	if _, ok := fldb.followingDB[uid]; !ok {
-		return nil, errors.New("в БД нет такой позиции")
-	}
-
-	deleteFollowingList := fldb.followingDB[uid]
-	delete(fldb.followingDB, uid)
-	return &deleteFollowingList, nil
-}
-
-func (fldb *followingMapDB) SearchShort(ctx context.Context, IPaddres string) (*followingBL.Following, error) {
+func (fldb *followingMapDB) SearchElement(ctx context.Context, statisticLink string, ipAddress string) (*followingBL.Following, error) {
 	fldb.Lock()
 	defer fldb.Unlock()
 
@@ -147,9 +105,53 @@ func (fldb *followingMapDB) SearchShort(ctx context.Context, IPaddres string) (*
 	}
 
 	for _, elem := range fldb.followingDB {
-		if elem.IPaddress == IPaddres {
+		//if elem.StatisticLink == statisticLink && elem.IPaddress == ipAddress {
+		if strings.Contains(elem.StatLink, statisticLink) && elem.IPaddress == ipAddress {
 			return &elem, nil
 		}
 	}
-	return nil, errors.New("в БД нет данной записи")
+
+	return nil, ErrorNotFound
 }
+
+func (fldb *followingMapDB) GetFollowingList(ctx context.Context, statisticLink string) ([]followingBL.Following, error) {
+	sliceOut := make([]followingBL.Following, 0, 100)
+
+		fldb.Lock()
+		defer fldb.Unlock()
+		for _, followingItem := range fldb.followingDB {
+			// if followingItem.StatisticLink == statisticLink {
+			if strings.Contains(followingItem.StatLink, statisticLink) {
+				select {
+				case <-ctx.Done():
+					return nil, ctx.Err()
+				//case <-time.After(2 * time.Second):
+				//	return
+				//case chout <- followingItem:
+				default:
+				}
+				sliceOut = append(sliceOut, followingItem)
+			}
+		}
+
+	return sliceOut, nil
+}
+
+//func (fldb *followingMapDB) ReadFollowing(ctx context.Context, following followingBL.Following) (*followingBL.Following, error) {
+//	fldb.Lock()
+//	defer fldb.Unlock()
+//
+//	select {
+//	case <-ctx.Done():
+//		return nil, ctx.Err()
+//	default:
+//	}
+//
+//	for _, readFollowing := range fldb.followingDB {
+//		if following.ShortenerID == readFollowing.ShortenerID && following.IPaddress == readFollowing.IPaddress {
+//			return &readFollowing, nil
+//		}
+//	}
+//
+//	return nil, sql.ErrNoRows
+//}

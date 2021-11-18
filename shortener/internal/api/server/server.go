@@ -1,9 +1,10 @@
 package server
 
 import (
+	"CourseProjectBackendDevGoLevel-1/shortener/internal/app/redirectBL"
+	"CourseProjectBackendDevGoLevel-1/shortener/internal/app/starter"
 	"context"
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/shortenerBL"
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/starter"
+	"log"
 	"net/http"
 	"time"
 )
@@ -12,7 +13,7 @@ var _ starter.APIServer = &Server{}
 
 type Server struct {
 	srv         http.Server
-	shortenerBL *shortenerBL.ShortenerBL
+	redirectBL *redirectBL.Redirect
 }
 
 func NewServer(addr string, h http.Handler) *Server {
@@ -30,11 +31,19 @@ func NewServer(addr string, h http.Handler) *Server {
 
 func (s *Server) Stop() {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	s.srv.Shutdown(ctx)
+	err := s.srv.Shutdown(ctx)
+	if err != nil {
+		log.Println("server shutdown error: ", err)
+	}
 	cancel()
 }
 
-func (s *Server) Start(shortBL *shortenerBL.ShortenerBL) {
-	s.shortenerBL = shortBL
-	go s.srv.ListenAndServe()
+func (s *Server) Start(redirectBL *redirectBL.Redirect) {
+	s.redirectBL = redirectBL
+	go func(*Server){
+		err := s.srv.ListenAndServe()
+		if err != nil {
+			log.Println("server error: ", err)
+		}
+	}(s)
 }

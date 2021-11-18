@@ -11,7 +11,20 @@
     {{ if ne .Error "" }}
     <p>{{.Error}}</p>
     {{else}}
-    <p>{{.FullLink}} {{.ShortLink}} {{.CreatedAt | dateFormat "02-01-2006 15:04:05"}}</p>
+    <div class="d-flex flex-column h-100">
+        <table class="table">
+            <th>Исходная ссылка</th>
+            <th>Короткая ссылка</th>
+            <th>Ссылка для просмотра статистики</th>
+            <th>Дата и время создания короткой ссылки</th>
+            <tr>
+                <td>{{.FullLink}}</td>
+                <td>{{.ShortLink}}</td>
+                <td>{{.StatLink}}</td>
+                <td>{{.CreatedAt | dateFormat "02-01-2006 15:04:05"}}</td>
+            </tr>
+        </table>
+    </div>
     {{end}}
 </body>
 </html>

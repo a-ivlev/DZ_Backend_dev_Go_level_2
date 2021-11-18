@@ -1,30 +1,30 @@
 package starter
 
 import (
+	"CourseProjectBackendDevGoLevel-1/shortener/internal/app/redirectBL"
 	"context"
-	"github.com/a-ivlev/DZ_Backend_dev_Go_level_2/internal/app/shortenerBL"
 	"sync"
 )
 
 type App struct {
-	shortenerBL *shortenerBL.ShortenerBL
+	redirectBL *redirectBL.Redirect
 }
 
-func NewApp(shortenerStore shortenerBL.ShortenerStore) *App {
+func NewApp(redirect *redirectBL.Redirect) *App {
 	app := &App{
-		shortenerBL: shortenerBL.NewShotenerBL(shortenerStore),
+		redirectBL: redirect,
 	}
 	return app
 }
 
 type APIServer interface {
-	Start(shortenerBL *shortenerBL.ShortenerBL)
+	Start(redirectBL *redirectBL.Redirect)
 	Stop()
 }
 
 func (a *App) Serve(ctx context.Context, wg *sync.WaitGroup, hs APIServer) {
 	defer wg.Done()
-	hs.Start(a.shortenerBL)
+	hs.Start(a.redirectBL)
 	<-ctx.Done()
 	hs.Stop()
 }

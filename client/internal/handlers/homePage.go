@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io"
+
 	"log"
 	"net/http"
 	"os"
@@ -26,8 +26,15 @@ type Shortener struct {
 	Title     string
 	FullLink  string    `json:"full_link"`
 	ShortLink string    `json:"short_link"`
+	StatLink  string    `json:"stat_link"`
 	CreatedAt time.Time `json:"created_at"`
 	Error     string
+}
+func (Shortener) Bind(r *http.Request) error {
+	return nil
+}
+func (Shortener) Render(w http.ResponseWriter, r *http.Request) error {
+	return nil
 }
 
 var funcMap = template.FuncMap{
@@ -76,14 +83,25 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Fprintf(w, "A error occured json.NewEncoder(&b).Encode(p).")
 		}
+
+		srvHost := os.Getenv("SRV_HOST")
+		if srvHost == "" {
+			log.Fatal("unknown SRV_HOST = ", srvHost)
+		}
+
+		srvPort := os.Getenv("SRV_PORT")
+		if srvPort == "" {
+			log.Fatal("unknown SRV_PORT = ", srvPort)
+		}
+
+		srv := fmt.Sprintf("http://%s:%s/create", srvHost, srvPort)
+
 		client := &http.Client{Timeout: time.Second * 2}
-		req, err := http.NewRequest(http.MethodPost, "http://localhost:8035/create", bytes.NewBuffer(strJSON))
+		req, err := http.NewRequest(http.MethodPost, srv, bytes.NewBuffer(strJSON))
 		if err != nil {
 			fmt.Fprintln(os.Stdout, "A error occured NewRequest.")
 		}
 		req.Header.Set("Content-Type", "application/json")
-		//req, err := http.Post("https://reqbin.com/echo/post/json", "application/json", bytes.NewBuffer(strJSON))
-		fmt.Println("json: ", string(strJSON))
 		res, err := client.Do(req)
 		if err != nil {
 			fmt.Fprintln(os.Stdout, "A error occured client Do.")
@@ -99,35 +117,31 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 				log.Println("error writing error home page: ", err)
 			}
 		}
-		fmt.Printf("%s", res.Status)
 
 		defer res.Body.Close()
 
 		shortDB := &Shortener{}
-		//if err := json.NewDecoder(res.Body).Decode(&shortDB); err != nil {
-		//	http.Error(w, "server error", http.StatusInternalServerError)
-		//	return
-		//}
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			fmt.Printf("An error occurred while reading the response body: %s", err)
-		}
-		fmt.Println("body ", string(body))
-		err = json.Unmarshal(body, &shortDB)
-		if err != nil {
-			fmt.Fprintf(w, "Error unmarshal request.")
+		if err = json.NewDecoder(res.Body).Decode(&shortDB); err != nil {
+			http.Error(w, "error unmarshal request", http.StatusInternalServerError)
 			return
 		}
-		fmt.Println("shortDB ", shortDB)
-		p.ShortLink = shortDB.ShortLink
+
+		cliHost := os.Getenv("CLI_HOST")
+		if cliHost == "" {
+			log.Fatal("unknown CLI_HOST = ", cliHost)
+		}
+
+		p.ShortLink = fmt.Sprintf("http://%s/%s", cliHost, shortDB.ShortLink)
 		p.FullLink = shortDB.FullLink
 		p.CreatedAt = shortDB.CreatedAt
+		p.StatLink = fmt.Sprintf("http://%s/stat/%s", cliHost, shortDB.StatLink)
 
 		err = t.ExecuteTemplate(&b, "homePage.html", p)
 		if err != nil {
-			fmt.Fprintf(w, "A error occured.")
+			fmt.Fprintf(w, "an error occured rendering home page")
 			return
 		}
+
 		_, err = b.WriteTo(w)
 		if err != nil {
 			log.Println("write render home page error: ", err)
