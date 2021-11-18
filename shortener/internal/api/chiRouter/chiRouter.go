@@ -1,7 +1,7 @@
 package chiRouter
 
 import (
-	"CourseProjectBackendDevGoLevel-1/shortener/internal/api/handler"
+	"DZ_Backend_dev_Go_level_2/shortener/internal/api/handler"
 	"context"
 
 	"github.com/go-chi/chi/v5"

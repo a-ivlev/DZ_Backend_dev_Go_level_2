@@ -1,8 +1,8 @@
 package redirectBL
 
 import (
-	"CourseProjectBackendDevGoLevel-1/shortener/internal/app/repository/followingBL"
-	"CourseProjectBackendDevGoLevel-1/shortener/internal/app/repository/shortenerBL"
+	"DZ_Backend_dev_Go_level_2/shortener/internal/app/repository/followingBL"
+	"DZ_Backend_dev_Go_level_2/shortener/internal/app/repository/shortenerBL"
 	"context"
 	"fmt"
 	"time"

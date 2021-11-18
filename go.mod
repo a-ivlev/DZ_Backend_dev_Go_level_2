@@ -1,4 +1,4 @@
-module CourseProjectBackendDevGoLevel-1
+module DZ_Backend_dev_Go_level_2
 
 go 1.17
 

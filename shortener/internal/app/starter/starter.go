@@ -1,7 +1,7 @@
 package starter
 
 import (
-	"CourseProjectBackendDevGoLevel-1/shortener/internal/app/redirectBL"
+	"DZ_Backend_dev_Go_level_2/shortener/internal/app/redirectBL"
 	"context"
 	"sync"
 )

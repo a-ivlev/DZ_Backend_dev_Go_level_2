@@ -1,8 +1,8 @@
 package server
 
 import (
-	"CourseProjectBackendDevGoLevel-1/shortener/internal/app/redirectBL"
-	"CourseProjectBackendDevGoLevel-1/shortener/internal/app/starter"
+	"DZ_Backend_dev_Go_level_2/shortener/internal/app/redirectBL"
+	"DZ_Backend_dev_Go_level_2/shortener/internal/app/starter"
 	"context"
 	"log"
 	"net/http"
@@ -12,7 +12,7 @@ import (
 var _ starter.APIServer = &Server{}
 
 type Server struct {
-	srv         http.Server
+	srv        http.Server
 	redirectBL *redirectBL.Redirect
 }
 
@@ -40,7 +40,7 @@ func (s *Server) Stop() {
 
 func (s *Server) Start(redirectBL *redirectBL.Redirect) {
 	s.redirectBL = redirectBL
-	go func(*Server){
+	go func(*Server) {
 		err := s.srv.ListenAndServe()
 		if err != nil {
 			log.Println("server error: ", err)
