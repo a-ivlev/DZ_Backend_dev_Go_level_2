@@ -9,24 +9,13 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
-# Копируем все файлы из директории ./shortener локальной машины в текущую директорию (shortener) образа.
+# Копируем все файлы из директории ./client локальной машины в текущую директорию (client) образа.
 COPY ./client ./client
 
 # Запускаем компиляцию программы на go и сохраняем полученный бинарный файл server в директорию / образа.
 #RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ../rental/server .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o ../client ./client/cmd/
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o ../short-cli ./client/cmd/
 
-
-FROM scratch
-
-WORKDIR /app
-
-# Копируем бинарник client из образа builder в корневую директорию.
-COPY --from=client-build /client /
-
-# Копируем сертификаты и таймзоны.
-COPY --from=client-build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=client-build /usr/share/zoneinfo /usr/share/zoneinfo
 # Устанавливаем в переменную окружения свою таймзону.
 ENV TZ=Europe/Moscow
 
@@ -38,4 +27,4 @@ ENV SRV_PORT=8035
 ENV CLI_PORT=8080
 
 # Запускаем приложение.
-CMD ["/client"]
+CMD ["/short-cli"]
