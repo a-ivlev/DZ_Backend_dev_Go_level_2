@@ -3,13 +3,11 @@ package chiRouter
 import (
 	"DZ_Backend_dev_Go_level_2/shortener/internal/api/handler"
 	"context"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"log"
 	"net/http"
 	"strings"
-
 )
 
 type ChiRouter struct {
@@ -26,7 +24,7 @@ func NewChiRouter(handlers *handler.Handlers) *ChiRouter {
 
 	chiNew.Group(func(r chi.Router) {
 		r.Post("/create", chiR.CreateShortener)
-		r.Get("/{short}", chiR.Redirect)
+		r.Post("/{short}", chiR.Redirect)
 		r.Post("/stat", chiR.Statistic)
 	})
 
@@ -63,23 +61,53 @@ func (chr *ChiRouter) CreateShortener(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (chr *ChiRouter) Redirect(w http.ResponseWriter, r *http.Request) {
-	rShortener := Shortener{}
+type Redirect handler.Redirect
+func (Redirect) Bind(r *http.Request) error {
+	return nil
+}
+func (Redirect) Render(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
 
-	rShortener.ShortLink = chi.URLParam(r, "short")
+func (chr *ChiRouter) Redirect(w http.ResponseWriter, r *http.Request) {
+	// Новый вариант
+	//ctx := context.WithValue(r.Context(), "IP_address", r.Context().Value("IP_address"))
 
 	ipaddr := strings.Split(r.RemoteAddr, ":")
 	//nolint:staticcheck
 	ctx := context.WithValue(r.Context(), "IP_address", ipaddr[0])
 
-	getFullink, err := chr.hs.Redirect(ctx, handler.Shortener(rShortener))
+	rRedirect := Redirect{}
+	if err := render.Bind(r, &rRedirect); err != nil {
+		//nolint:errcheck
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	getFullink, err := chr.hs.Redirect(ctx, handler.Redirect(rRedirect))
 	if err != nil {
 		//nolint:errcheck
 		render.Render(w, r, ErrInvalidRequest(err))
 		return
 	}
 
-	http.Redirect(w, r, getFullink.FullLink, http.StatusFound)
+	err = render.Render(w, r, Redirect(getFullink))
+	if err != nil {
+		log.Println(err)
+	}
+
+	//rShortener := Shortener{}
+	//
+	//getFullink, err := chr.hs.Redirect(r.Context(), handler.Shortener(rShortener))
+	//if err != nil {
+	//	//nolint:errcheck
+	//	render.Render(w, r, ErrInvalidRequest(err))
+	//	return
+	//}
+	//
+	////nolint:errcheck
+	//render.Render(w, r, Shortener(getFullink))
+
 }
 
 type Statistic handler.Statistic

@@ -7,7 +7,7 @@ Content-Type: application/json
 }
 
 ### Send POST request with json body
-POST http://localhost:8035/create
+POST http://localhost:8040/create
 Content-Type: application/json
 
 {
@@ -31,3 +31,21 @@ Content-Type: application/json
 ### mail.ru
 GET http://localhost:8080/
 
+
+
+
+### Send POST request with json body
+POST http://localhost:8001/create
+Content-Type: application/json
+
+{
+  "full_link":"https://yandex.ru/"
+}
+
+### Send POST request with json body
+POST http://localhost:8001/4B11BA43
+Content-Type: application/json
+
+{
+  "short_link":"4B11BA43"
+}

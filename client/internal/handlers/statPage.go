@@ -66,12 +66,12 @@ func StatPage(w http.ResponseWriter, r *http.Request) {
 
 		srvHost := os.Getenv("SRV_HOST")
 		if srvHost == "" {
-			srvHost = "localhost"
+			log.Fatal("unknown SRV_HOST = ", srvHost)
 		}
 
 		srvPort := os.Getenv("SRV_PORT")
 		if srvPort == "" {
-			srvPort = "8035"
+			log.Fatal("unknown SRV_PORT = ", srvPort)
 		}
 
 		srv := fmt.Sprintf("http://%s:%s/stat", srvHost, srvPort)

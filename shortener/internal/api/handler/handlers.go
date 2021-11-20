@@ -6,6 +6,7 @@ import (
 	"DZ_Backend_dev_Go_level_2/shortener/internal/app/repository/shortenerBL"
 	"context"
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -47,22 +48,34 @@ func (h *Handlers) CreateShortener(ctx context.Context, short Shortener) (Shorte
 	}, nil
 }
 
-func (h *Handlers) Redirect(ctx context.Context, short Shortener) (Shortener, error) {
+type Redirect struct {
+	ShortLink string `json:"short_link"`
+	FullLink string `json:"full_link"`
+}
+
+func (h *Handlers) Redirect(ctx context.Context, short Redirect) (Redirect, error) {
+	// TODO server handlers func Redirect short.ShortLink
+	log.Println("server handlers Redirect short.ShortLink", short.ShortLink)
+
+
 	shortenerBL := shortenerBL.Shortener{
 		ShortLink: short.ShortLink,
 	}
 
+	// TODO server handlers func Redirect shortenerBL
+	log.Println("server handlers func Redirect shortenerBL", shortenerBL)
+
 	getFullink, err := h.redirectBL.GetFullLink(ctx, shortenerBL)
 	if err != nil {
-		return Shortener{}, fmt.Errorf("error when get URL: %w", err)
+		return short, fmt.Errorf("error when get URL: %w", err)
 	}
 
-	return Shortener{
-		ShortLink:  getFullink.ShortLink,
+	// TODO server handlers func Redirect getFullink
+	log.Println("server handlers func Redirect getFullink", getFullink)
+
+	return Redirect{
+		ShortLink:  short.ShortLink,
 		FullLink:   getFullink.FullLink,
-		StatLink:   getFullink.StatLink,
-		TotalCount: getFullink.TotalCount,
-		CreatedAt:  getFullink.CreatedAt,
 	}, nil
 }
 

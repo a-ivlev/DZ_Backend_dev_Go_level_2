@@ -1,7 +1,7 @@
 package main
 
 import (
-	"CourseProjectBackendDevGoLevel-1/client/internal/handlers"
+	"DZ_Backend_dev_Go_level_2/client/internal/handlers"
 	"github.com/go-chi/chi/v5"
 
 	"log"
