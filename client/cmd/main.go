@@ -21,6 +21,8 @@ func main() {
 	r.Get("/{short}", handlers.RedirectPage)
 	r.Get("/stat/{stat}", handlers.StatPage)
 
+	r.Get("/__heartbeat__", func(w http.ResponseWriter, r *http.Request) {})
+
 	err := http.ListenAndServe(":"+cliPort, r)
 	if err != nil {
 		log.Println("Client shortener stopped...")

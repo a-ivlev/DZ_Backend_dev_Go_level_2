@@ -27,6 +27,8 @@ func NewChiRouter(handlers *handler.Handlers) *ChiRouter {
 		r.Post("/stat", chiR.Statistic)
 	})
 
+	chiNew.Get("/__heartbeat__", func(w http.ResponseWriter, r *http.Request) {})
+
 	chiR.Mux = chiNew
 
 	return chiR

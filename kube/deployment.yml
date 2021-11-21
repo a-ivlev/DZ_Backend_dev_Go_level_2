@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: shortener
+  name: k8s-shortener
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -11,13 +11,57 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: shortener
-      template:
-        metadata:
-          labels:
-            app: shortener
-          spec:
-            containers:
-              - name: shortener-srv
-                image: docker.io/aivlev/shortener-srv:v2.0.0
-                imagePullPolicy: Always
+      app: k8s-shortener
+  template:
+    metadata:
+      labels:
+        app: k8s-shortener
+    spec:
+      containers:
+        - name: k8s-shortener
+          image: docker.io/aivlev/shortener-srv:v2.0.1
+          imagePullPolicy: Always
+          ports:
+            - conteinerPort: 8042
+          env:
+            - name: SRV_PORT
+              value: 8042
+            - name: SHORTENER_STORE
+              value: mem
+#          livenessProbe:  # используется для перезапуска контейнера, Кубернетес регулярно проверяет что контейнер ещё жив. Если зафейлилась кубернетес рестартует контейнер.
+#            httGet:
+#              path: /__heartbeat__
+#              port: 8042
+#              scheme: HTTP
+#            initialDelaySeconds: 5
+#            periodSeconds: 15
+#            timeoutSeconds: 5
+#          readinessProbe: # используется для того, чтобы проверить что роутер у сервиса работает корректно, что он способен принимать запросы. Если она зафейлилиась кубернетес переадресует запросы на другой под.
+#            httGet:
+#              path: /__heartbeat__
+#              port: 8042
+#              scheme: HTTP
+#            initialDelaySeconds: 5
+#            periodSeconds: 15
+#            timeoutSeconds: 1
+#        - name: shortener-cli # имя контейнера
+#            image: docker.io/aivlev/shortener-cli:v2.0.0 # образ из которого создаётся контейнер
+#            imagePullPolicy: Always
+#            ports:
+#              - conteinerPort: 8080
+#            livenessProbe:
+#              httGet:
+#                path: /__heartbeat__
+#                port: 8080
+#                scheme: HTTP
+#              initialDelaySeconds: 5
+#              periodSeconds: 15
+#              timeoutSeconds: 1
+#            readinessProbe: # используется для того, чтобы проверить что роутер у сервиса работает корректно, что он способен принимать запросы. Если она зафейлилиась кубернетес переадресует запросы на другой под.
+#              httGet:
+#                path: /__heartbeat__
+#                port: 8008
+#                scheme: HTTP
+#              initialDelaySeconds: 5
+#              periodSeconds: 15
+#              timeoutSeconds: 1
