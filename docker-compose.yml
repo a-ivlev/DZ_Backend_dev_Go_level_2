@@ -1,54 +1,42 @@
 version: "3.9"
 
-#volumes:
-#  shortener-db-pg:
+volumes:
+  shortener-db-pg:
 
 networks:
   localnet:
 
 services:
 
-#  registry:
-#    container_name: registry
-#    image: registry:2
-#    ports:
-#      - 5000:5000
-#    restart: always
-#    networks:
-#      - rentalnet
-
-#  postgres:
-#    container_name: pg-shortener
-#    image: postgres:13.1
-#    ports:
-#      - 5432:5432
-#    volumes:
-#      #      - ./initDB:/docker-entrypoint-initdb.d
-#      #      - /var/lib/postgresql/data:/var/lib/postgresql/data
-#      - shortener-db-pg:/var/lib/postgresql/data
-#    environment:
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: 1110
-#      POSTGRES_DB:  shotener-db
-#    restart: always
-#    networks:
-#      - localnet
+  postgres:
+    container_name: pg-shortener
+    image: postgres:13.1
+    ports:
+      - 5432:5432
+    volumes:
+      #      - ./initDB:/docker-entrypoint-initdb.d
+      #      - /var/lib/postgresql/data:/var/lib/postgresql/data
+      - shortener-db-pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: 1110
+      POSTGRES_DB:  shotener-db
+    restart: always
+    networks:
+      - localnet
 
   server:
     container_name: server
-    image: aivlev/shortener-srv:v2.0.0
+    image: docker.io/aivlev/shortener-srv:v2.0.0
     build: .
     ports:
       - 8042:8042
     environment:
       #     Переопределяем переменную окружения установленную в Docerfile.
-#      SRV_HOST: localhost
       SRV_PORT: 8042
-      SHORTENER_STORE: mem
-      #POSTGRES_DSN: "postgres://postgres:1110@postgres/shortener-db?sslmode=disable"
-#    depends_on:
-#      - registry
-#      - postgres
+      SHORTENER_STORE: pg
+      POSTGRES_DSN: "postgres://postgres:1110@postgres/shortener-db?sslmode=disable"
+    depends_on:
+      - postgres
     restart: always
     networks:
       - localnet

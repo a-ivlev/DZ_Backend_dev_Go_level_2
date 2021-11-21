@@ -14,6 +14,7 @@ type PostgresDB struct {
 
 func NewPostgresDB() *PostgresDB {
 	dsn := os.Getenv("POSTGRES_DSN")
+
 	if dsn == "" {
 		log.Fatal("POSTGRES_DSN is not set in the environment variable")
 	}

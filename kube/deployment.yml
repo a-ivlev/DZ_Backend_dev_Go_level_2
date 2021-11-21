@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shortener
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavalible: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: shortener
+      template:
+        metadata:
+          labels:
+            app: shortener
+          spec:
+            containers:
+              - name: shortener-srv
+                image: docker.io/aivlev/shortener-srv:v2.0.0
+                imagePullPolicy: Always

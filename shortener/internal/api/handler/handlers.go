@@ -49,7 +49,8 @@ func (h *Handlers) CreateShortener(ctx context.Context, short Shortener) (Shorte
 
 type Redirect struct {
 	ShortLink string `json:"short_link"`
-	FullLink string `json:"full_link"`
+	FullLink  string `json:"full_link"`
+	IPaddress string `json:"ip_address"`
 }
 
 func (h *Handlers) Redirect(ctx context.Context, short Redirect) (Redirect, error) {
@@ -63,8 +64,8 @@ func (h *Handlers) Redirect(ctx context.Context, short Redirect) (Redirect, erro
 	}
 
 	return Redirect{
-		ShortLink:  short.ShortLink,
-		FullLink:   getFullink.FullLink,
+		ShortLink: short.ShortLink,
+		FullLink:  getFullink.FullLink,
 	}, nil
 }
 

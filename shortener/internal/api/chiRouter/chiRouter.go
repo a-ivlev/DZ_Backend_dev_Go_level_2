@@ -7,7 +7,6 @@ import (
 	"github.com/go-chi/render"
 	"log"
 	"net/http"
-	"strings"
 )
 
 type ChiRouter struct {
@@ -70,19 +69,15 @@ func (Redirect) Render(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (chr *ChiRouter) Redirect(w http.ResponseWriter, r *http.Request) {
-	// Новый вариант
-	//ctx := context.WithValue(r.Context(), "IP_address", r.Context().Value("IP_address"))
-
-	ipaddr := strings.Split(r.RemoteAddr, ":")
-	//nolint:staticcheck
-	ctx := context.WithValue(r.Context(), "IP_address", ipaddr[0])
-
 	rRedirect := Redirect{}
 	if err := render.Bind(r, &rRedirect); err != nil {
 		//nolint:errcheck
 		render.Render(w, r, ErrInvalidRequest(err))
 		return
 	}
+
+	//nolint:staticcheck
+	ctx := context.WithValue(r.Context(), "IP_address", rRedirect.IPaddress)
 
 	getFullink, err := chr.hs.Redirect(ctx, handler.Redirect(rRedirect))
 	if err != nil {
@@ -95,19 +90,6 @@ func (chr *ChiRouter) Redirect(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-
-	//rShortener := Shortener{}
-	//
-	//getFullink, err := chr.hs.Redirect(r.Context(), handler.Shortener(rShortener))
-	//if err != nil {
-	//	//nolint:errcheck
-	//	render.Render(w, r, ErrInvalidRequest(err))
-	//	return
-	//}
-	//
-	////nolint:errcheck
-	//render.Render(w, r, Shortener(getFullink))
-
 }
 
 type Statistic handler.Statistic

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
@@ -13,13 +12,13 @@ import (
 	"time"
 )
 
-
 type Redirect struct {
 	ShortLink string `json:"short_link"`
-	FullLink string `json:"full_link"`
+	FullLink  string `json:"full_link"`
+	IPaddress string `json:"ip_address"`
 }
 
-func RedirectPage(w http.ResponseWriter, r *http.Request)  {
+func RedirectPage(w http.ResponseWriter, r *http.Request) {
 	//srvHost := os.Getenv("SRV_HOST")
 	//if srvHost == "" {
 	//	log.Fatal("unknown SRV_HOST = ", srvHost)
@@ -35,15 +34,15 @@ func RedirectPage(w http.ResponseWriter, r *http.Request)  {
 	//redirect := fmt.Sprintf("http://%s:%s/%s", srvHost, srvPort, redirectPath)
 	//http.Redirect(w, r, redirect, http.StatusFound)
 
-
 	if r.Method == http.MethodGet {
 
 		ipaddr := strings.Split(r.RemoteAddr, ":")
 		//nolint:staticcheck
-		r = r.WithContext(context.WithValue(r.Context(), "IP_address", ipaddr[0]))
+		//r = r.WithContext(context.WithValue(r.Context(), "IP_address", ipaddr[0]))
 
 		shortLink := &Redirect{
 			ShortLink: chi.URLParam(r, "short"),
+			IPaddress: ipaddr[0],
 		}
 
 		strJSON, err := json.Marshal(&shortLink)
@@ -84,6 +83,5 @@ func RedirectPage(w http.ResponseWriter, r *http.Request)  {
 
 		http.Redirect(w, r, respRedirect.FullLink, http.StatusFound)
 	}
-
 
 }
