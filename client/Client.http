@@ -49,3 +49,14 @@ Content-Type: application/json
 {
   "short_link":"4B11BA43"
 }
+
+
+### Kubernetes
+### Send POST request with json body
+POST http://10.152.183.100:8042/create
+Content-Type: application/json
+
+{
+  "full_link":"https://yandex.ru/"
+}
+

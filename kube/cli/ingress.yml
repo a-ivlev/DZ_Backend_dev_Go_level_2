@@ -1,0 +1,18 @@
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: k8s-shortener-cli
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-terget: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: k8s-shortener-cli-service
+            port:
+              number: 8080

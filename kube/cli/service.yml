@@ -1,0 +1,21 @@
+# API кубернетиса
+apiVersion: v1
+# kind показывает кубернетису, какой тип ресурса мы описываем
+kind: Service
+metadata:
+  # name название пода который будет формироваться по spec описанной ниже
+  name: k8s-shortener-cli-service
+# описание типа сервиса
+spec:
+  # NodePort даёт каждой ноде внешний IP для обработки запросов со стороны
+  type: NodePort
+  # selector определяет для каких подов применим сервис
+  selector:
+    app: k8s-shortener-cli
+  ports:
+    - name: cli-http
+      # принимает входящие запросы на этот порт и перенаправляет их на targetPort
+      port: 8080
+      # Порт внутри контейнера
+      targetPort: 8080
+

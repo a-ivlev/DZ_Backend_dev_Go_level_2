@@ -1,0 +1,63 @@
+# API кубернетиса
+apiVersion: apps/v1
+# kind показывает кубернетису, какой тип ресурса мы описываем
+kind: Deployment
+metadata:
+  # name название пода который будет формироваться по spec описанной ниже
+  name: k8s-shortener-srv
+spec:
+  # replicas сколько реплик (экземпляров) подов можно запустить
+  replicas: 1
+  # strategy описывает стратегию развёртывания при переходе с текущей версии на новую
+  strategy:
+    # RollingUpdate обеспечивает нулевое время простоя системы
+    type: RollingUpdate
+    rollingUpdate:
+      # maxUnavailable показывает максимальное количество недоступных подов при выполнении обновления системы
+      maxUnavailable: 0
+      # maxSurge максимальное число подов, которое можно добавить в развёртывание, в нашем случае его значение равно 1,
+      # следовательно, при переходе на новую версию программы мы можем добавить в кластер ещё один под
+      maxSurge: 1
+  selector:
+    # matchLabels показывает, что развёртывание применится к подам с такими лейблами. В данном случае app: k8s-shortener
+    matchLabels:
+      app: k8s-shortener-srv
+  # template задаёт шаблон пода, который ресурс Deployment станет использовать для создания новых подов по заданной конфигурации
+  template:
+    metadata:
+      labels:
+        app: k8s-shortener-srv
+    spec:
+      containers:
+          # имя контейнера
+        - name: k8s-shortener-srv
+          # название образа для контейнера. В нашем случае мы берём его с dockerhub
+          image: docker.io/aivlev/shortener-srv:v2.0.1
+          # определяет порядок работы с образами, Always — всегда загружаем образ из репозитория
+          imagePullPolicy: Always
+          ports:
+              # containerPort — должен совпадать с портом, на котором запущено go-приложение
+            - containerPort: 8042
+          env:
+            - name: SRV_PORT
+              value: '8042'
+            - name: SHORTENER_STORE
+              value: mem
+          # livenessProbe определяет правила проверки, жив ли под. Если эта проба проваливается — приложение перезапускается
+          livenessProbe:
+            httpGet:
+              path: /__heartbeat__
+              port: 8042
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          # readinessProbe определяет правила проверки, готов ли под к трафику. Если проба проваливается, контейнер удаляется из балансировщиков нагрузки сервиса.
+          readinessProbe:
+            httpGet:
+              path: /__heartbeat__
+              port: 8042
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 1
