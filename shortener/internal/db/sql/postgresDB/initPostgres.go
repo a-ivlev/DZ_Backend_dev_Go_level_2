@@ -61,3 +61,20 @@ CREATE TABLE IF NOT EXISTS public."following" (
 func (pg *PostgresDB) Close() {
 	pg.db.Close()
 }
+
+
+func WithTx(db *sql.DB, f func(tx *sql.Tx)error) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	if err = f(tx); err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+}

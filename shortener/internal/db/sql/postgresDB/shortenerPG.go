@@ -3,8 +3,8 @@ package postgresDB
 import (
 	"DZ_Backend_dev_Go_level_2/shortener/internal/app/repository/shortenerBL"
 	"context"
+	"database/sql"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -31,25 +31,20 @@ func (pg *PostgresDB) CreateShort(ctx context.Context, short shortenerBL.Shorten
 		CreatedAt:  short.CreatedAt,
 	}
 
-	result, err := pg.db.ExecContext(ctx, `INSERT INTO shortener
-    (id, short_link, full_link, stat_link, total_count, created_at)
-    values ($1, $2, $3, $4, $5, $6);`,
-		shortDB.ID,
-		shortDB.ShortLink,
-		shortDB.FullLink,
-		shortDB.StatLink,
-		shortDB.TotalCount,
-		shortDB.CreatedAt,
-	)
-	if err != nil {
+	if err := WithTx(pg.db, func(tx *sql.Tx) error {
+		_, err := pg.db.ExecContext(ctx, `INSERT INTO shortener
+		(id, short_link, full_link, stat_link, total_count, created_at)
+		values ($1, $2, $3, $4, $5, $6);`,
+			shortDB.ID,
+			shortDB.ShortLink,
+			shortDB.FullLink,
+			shortDB.StatLink,
+			shortDB.TotalCount,
+			shortDB.CreatedAt,
+		)
+		return err
+	}); err != nil {
 		return nil, err
-	}
-	rows, err := result.RowsAffected()
-	if err != nil {
-		log.Fatal(err)
-	}
-	if rows != 1 {
-		log.Fatalf("expected to affect 1 row, affected %d", rows)
 	}
 
 	return &short, nil
@@ -65,11 +60,13 @@ func (pg *PostgresDB) UpdateShort(ctx context.Context, short shortenerBL.Shorten
 		CreatedAt:  short.CreatedAt,
 	}
 
-	_, err := pg.db.ExecContext(ctx, `UPDATE shortener SET total_count=$2 WHERE id=$1;`,
-		shortDB.ID,
-		shortDB.TotalCount,
-	)
-	if err != nil {
+	if err := WithTx(pg.db, func(tx *sql.Tx) error {
+		_, err := pg.db.ExecContext(ctx, `UPDATE shortener SET total_count=$2 WHERE id=$1;`,
+			shortDB.ID,
+			shortDB.TotalCount,
+		)
+		return err
+	});	err != nil {
 		return nil, fmt.Errorf("failed to update shortener total_count and created_at db: %w", err)
 	}
 

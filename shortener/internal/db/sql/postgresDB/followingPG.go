@@ -30,19 +30,21 @@ func (pg *PostgresDB) CreateFollow(ctx context.Context, follow followingBL.Follo
 		FollowLinkAt: follow.FollowLinkAt,
 	}
 
-	_, err := pg.db.ExecContext(ctx, `INSERT INTO following
-    (id, shortener_id, stat_link, ip_address, count, follow_link_at)
-    values ($1, $2, $3, $4, $5, $6);`,
-		followDB.ID,
-		followDB.ShortenerID,
-		followDB.StatLink,
-		followDB.IPaddress,
-		followDB.Count,
-		followDB.FollowLinkAt,
-	)
-	if err != nil {
-		return nil, err
-	}
+	if err := WithTx(pg.db, func(tx *sql.Tx) error {
+		_, err := pg.db.ExecContext(ctx, `INSERT INTO following
+		(id, shortener_id, stat_link, ip_address, count, follow_link_at)
+		values ($1, $2, $3, $4, $5, $6);`,
+			followDB.ID,
+			followDB.ShortenerID,
+			followDB.StatLink,
+			followDB.IPaddress,
+			followDB.Count,
+			followDB.FollowLinkAt,
+		)
+		return err
+	}); err != nil {
+			return nil, err
+		}
 
 	return &follow, nil
 }
@@ -89,16 +91,18 @@ func (pg *PostgresDB) UpdateFollow(ctx context.Context, following followingBL.Fo
 		FollowLinkAt: following.FollowLinkAt,
 	}
 
-	_, err := pg.db.ExecContext(ctx, `
-	UPDATE following SET ip_address=$2, count=$3, follow_link_at=$4 WHERE id=$1;`,
-		followDB.ID,
-		followDB.IPaddress,
-		followDB.Count,
-		followDB.FollowLinkAt,
-	)
-	if err != nil {
-		return nil, err
-	}
+	if err := WithTx(pg.db, func(tx *sql.Tx) error {
+		_, err := pg.db.ExecContext(ctx, `
+		UPDATE following SET ip_address=$2, count=$3, follow_link_at=$4 WHERE id=$1;`,
+			followDB.ID,
+			followDB.IPaddress,
+			followDB.Count,
+			followDB.FollowLinkAt,
+		)
+		return err
+	}); err != nil {
+			return nil, err
+		}
 
 	return &following, nil
 }
