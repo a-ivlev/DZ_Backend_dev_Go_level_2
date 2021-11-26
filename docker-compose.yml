@@ -26,14 +26,14 @@ services:
 
   server:
     container_name: server
-    image: docker.io/aivlev/shortener-srv:v2.0.0
+    image: docker.io/aivlev/shortener-srv:v2.0.1
     build: .
     ports:
       - 8042:8042
     environment:
       #     Переопределяем переменную окружения установленную в Docerfile.
       SRV_PORT: 8042
-      SHORTENER_STORE: pg
+      SHORTENER_STORE: mem
       POSTGRES_DSN: "postgres://postgres:1110@postgres/shortener-db?sslmode=disable"
     depends_on:
       - postgres
@@ -43,16 +43,16 @@ services:
 
   client:
     container_name: client
-    image: aivlev/shortener-cli:v2.0.0
+    image: aivlev/shortener-cli:v2.0.1
     build: .
     ports:
-      - 8082:8082
+      - 8080:8080
     environment:
       #     Переопределяем переменную окружения установленную в Docerfile.
       SRV_HOST: server
       SRV_PORT: 8042
       CLI_HOST: localhost
-      CLI_PORT: 8082
+      CLI_PORT: 8080
     depends_on:
       - server
     restart: always

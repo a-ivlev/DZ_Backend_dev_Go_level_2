@@ -32,7 +32,7 @@ spec:
           # имя контейнера
         - name: k8s-shortener-cli
           # название образа для контейнера. В нашем случае мы берём его с dockerhub
-          image: docker.io/aivlev/shortener-cli:v2.0.0
+          image: docker.io/aivlev/shortener-cli:v2.0.1
           # определяет порядок работы с образами, Always — всегда загружаем образ из репозитория
           imagePullPolicy: Always
           ports:

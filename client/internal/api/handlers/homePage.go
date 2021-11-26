@@ -95,7 +95,7 @@ func PostHomePage(strJSON []byte) (bytes.Buffer, error) {
 	if err != nil {
 		log.Println("A error occured client Do: ", err)
 		p.Error = "Не удалось получить ответ от сервера."
-		//b.Reset()
+		b.Reset()
 		err = t.ExecuteTemplate(&b, "homePage.html", p)
 		if err != nil {
 			return b, fmt.Errorf("an error redirect homePage.html: %s", err)

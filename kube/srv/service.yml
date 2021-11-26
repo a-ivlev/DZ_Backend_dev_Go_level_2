@@ -8,7 +8,7 @@ metadata:
 # описание типа сервиса
 spec:
   # NodePort даёт каждой ноде внешний IP для обработки запросов со стороны
-  type: NodePort #ClusterIP
+  type: ClusterIP # NodePort #ClusterIP
   # selector определяет для каких подов применим сервис
   selector:
     app: k8s-shortener-srv
