@@ -1,34 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: statics
+  name: staticsGreen
   labels:
-    app: statics
+    app: staticsGreen
 spec:
   selector:
     matchLabels:
-      app: statics
+      app: staticsGreen
   replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 50%
-      maxSurge: 1
+      maxUnavailable: 100%
+      maxSurge: 0
   template:
     metadata:
       labels:
-        app: statics
+        app: staticsGreen
     spec:
       containers:
-        - name: statics
-          image: docker.io/aivlev/statics:v1.0.0
+        - name: staticsGreen
+          image: docker.io/aivlev/statics:v1.0.1
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
           livenessProbe:
             httpGet:
               path: /__heartbeat__
-              port: 8080
+              port: 8081
               scheme: HTTP
             initialDelaySeconds: 5
             periodSeconds: 15
@@ -36,7 +36,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /__heartbeat__
-              port: 8080
+              port: 8081
               scheme: HTTP
             initialDelaySeconds: 5
             periodSeconds: 15

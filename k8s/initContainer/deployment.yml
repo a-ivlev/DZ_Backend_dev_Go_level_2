@@ -19,10 +19,32 @@ spec:
       labels:
         app: statics
     spec:
+      volumes:
+        - name: src
+          emptyDir: { }
+      initContainers:
+        - name: prepare-statics
+          image: alpine/git
+          command:
+            - git
+            - clone
+            - https://github.com/mdn/beginner-html-site-scripted
+            - /static
+          volumeMounts:
+            - name: src
+              mountPath: /static
       containers:
         - name: statics
           image: docker.io/aivlev/statics:v1.0.0
           imagePullPolicy: Always
+          volumeMounts:
+            - name: src
+              mountPath: /static
+          env:
+            - name: PORT
+              value: "8080"
+            - name: STATICS_PATH
+              value: "/static"
           ports:
             - containerPort: 8080
           livenessProbe:

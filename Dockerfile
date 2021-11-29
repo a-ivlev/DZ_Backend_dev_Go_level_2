@@ -10,13 +10,13 @@ COPY --from=modules /go/pkg /go/pkg
 
 RUN mkdir -p /src
 ADD staticsrv/go.mod staticsrv/go.sum /src/
-ADD staticsrv/cmd/staticsrv /src
+ADD staticsrv/ /src
 WORKDIR /src
 
 RUN useradd -u 10001 myapp
 
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
-go build -o /myapp ./
+go build -o /myapp ./cmd/staticsrv
 
 # Готовим пробный файл статики
 RUN mkdir -p /test_static && touch /test_static/index.html
