@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/kelseyhightower/envconfig"
 	"log"
 	"os"
 	"os/signal"
 	"staticsrv/internal/api/server"
 	"staticsrv/internal/app/version"
 	"syscall"
+
+	"github.com/kelseyhightower/envconfig"
 )
 
 // Config задает параметры конфигурации приложения
@@ -25,19 +26,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Can't process config: %v", err)
 	}
-
-	//r := http.NewServeMux()
-	//r.Handle("/__heartbeat__", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
-	//fs := http.FileServer(http.Dir(config.StaticsPath))
-	//r.Handle("/", fs)
-
-	//go func() {
-	//	log.Printf("start server on port: %s", config.Port)
-	//	err = http.ListenAndServe(":"+config.Port, r)
-	//	if err != nil {
-	//		log.Fatalf("Error while serving: %v", err)
-	//	}
-	//}()
 
 	info := server.VersionInfo{
 		Version: version.Version,
