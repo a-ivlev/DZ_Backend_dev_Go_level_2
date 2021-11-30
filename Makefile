@@ -53,21 +53,19 @@ deleteinitContainer:
 	kubectl -n myuser delete -f ./k8s/initContainer/
 
 
+
+#write here your username
+USERNAME := aivlev
+APP_NAME := staticsrv
+VERSION := 1.0.2
+
 #write here path for your project
-PROJECT :=
-
+PROJECT := internal/app
 GIT_COMMIT := $(shell git rev-parse HEAD)
-VERSION := v1.0.1
-APP_NAME := staticssrv
 
-all: run
+build_container:
+	docker build --build-arg=PROJECT=$(PROJECT) --build-arg=APP_NAME=$(APP_NAME) --build-arg=VERSION=$(VERSION) --build-arg=GIT_COMMIT=$(GIT_COMMIT) -f ./flag.Dockerfile -t docker.io/$(USERNAME)/$(APP_NAME):$(VERSION) .
 
-run:
-	#cd staticssrv/cmd/staticssrv
-	go install -ldflags="-X '$(PROJECT)/version.Version=$(VERSION)' -X '$(PROJECT)/version.Commit=$(GIT_COMMIT)'" && $(APP_NAME)
 
-dockerbuild:
-	docker build -f ./Dockerfile -t docker.io/aivlev/$(APP_NAME):$(VERSION) .
-
-dockerpush:
-	docker push docker.io/aivlev/$(APP_NAME):$(VERSION)
+push_container:
+	docker push docker.io/$(USERNAME)/$(APP_NAME):$(VERSION)
