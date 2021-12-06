@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: statics
+  labels:
+    app: statics
+spec:
+  selector:
+    matchLabels:
+      app: statics
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: statics
+    spec:
+      containers:
+        - name: statics
+          image: docker.io/aivlev/statics:v1.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+          livenessProbe:
+            httpGet:
+              path: /__heartbeat__
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /__heartbeat__
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 2m
+              memory: 10Mi
+            requests:
+              cpu: 2m
+              memory: 10Mi
