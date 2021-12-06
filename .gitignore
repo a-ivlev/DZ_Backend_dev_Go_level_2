@@ -18,3 +18,4 @@
 .gitignore
 
 test_static/*
+spacecraft/*
