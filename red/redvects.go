@@ -73,4 +73,5 @@ func init() {
 	prometheus.MustRegister(Duration)
 	prometheus.MustRegister(ErrorsTotal)
 	prometheus.MustRegister(RequestsTotal)
+
 }

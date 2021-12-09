@@ -2,7 +2,6 @@ package red
 
 import (
 	"bufio"
-	"github.com/prometheus/client_golang/prometheus"
 	"io"
 	"net"
 	"net/http"
@@ -208,38 +207,21 @@ var MeasurableHandler = func(h http.HandlerFunc) http.HandlerFunc {
 		t := time.Now()
 		m := r.Method
 		p := r.URL.Path
-		//requestsTotal.
-		//	WithLabelValues(p, m).
-		//	Inc()
-		requestsTotal.With(prometheus.Labels{
-			"method":  m,
-			"handler": p,
-		}).Inc()
+		requestsTotal.
+			WithLabelValues(p, m).
+			Inc()
 
 		mw := newMeasurableWriter(w)
 		h(mw, r)
 		if mw.Status()/100 > 3 {
-			//errorsTotal.
-			//	WithLabelValues(p, m, strconv.Itoa(mw.Status())).
-			//	Inc()
-
 			errorsTotal.
-				With(prometheus.Labels{
-					"method":  m,
-					"handler": p,
-					"code":    strconv.Itoa(mw.Status()),
-				}).Inc()
+				WithLabelValues(p, m, strconv.Itoa(mw.Status())).
+				Inc()
 		}
 
-		//duration.
-		//	WithLabelValues(p, m, strconv.Itoa(mw.Status())).
-		//	Observe(time.Since(t).Seconds())
-
-		duration.With(prometheus.Labels{
-			"method":  m,
-			"handler": p,
-			"code":    strconv.Itoa(mw.Status()),
-		}).Observe(time.Since(t).Seconds())
+		duration.
+			WithLabelValues(p, m, strconv.Itoa(mw.Status())).
+			Observe(time.Since(t).Seconds())
 
 	}
 }
