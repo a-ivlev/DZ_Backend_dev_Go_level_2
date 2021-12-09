@@ -41,7 +41,7 @@ var (
 
 	errorsDBTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "errors_db_total",
+			Name: "errors_request_db_total",
 			Help: "Total number of errors",
 		},
 		[]string{labelRequestDB, labelMethod},
