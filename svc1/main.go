@@ -114,12 +114,11 @@ func AddEntityHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	res.Body.Close()
 
-	t := time.Now()
 	p := "db.Exec"
 	m := "write"
 
 	requestsDbTotal.WithLabelValues(p, m).Inc()
-
+	t := time.Now()
 	_, err = db.Exec(sqlInsertEntity, r.FormValue("id"), r.FormValue("data"))
 	durationDB.WithLabelValues(p, m).Observe(time.Since(t).Seconds())
 	if err != nil {
