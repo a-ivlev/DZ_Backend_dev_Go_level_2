@@ -6,11 +6,9 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"lesson04/red"
 	"net/http"
-	"time"
 )
 
 var (
@@ -22,38 +20,6 @@ var (
 	web    = http.Server{
 		Handler: router,
 	}
-)
-
-const (
-	labelRequestDB = "request"
-	labelMethod    = "method"
-)
-
-var (
-	durationDB = prometheus.NewSummaryVec(
-		prometheus.SummaryOpts{
-			Name:       "duration_seconds_request_db",
-			Help:       "Summary of request duration in seconds",
-			Objectives: map[float64]float64{0.9: 0.01, 0.95: 0.005, 0.99: 0.001},
-		},
-		[]string{labelRequestDB, labelMethod},
-	)
-
-	errorsDBTotal = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "errors_request_db_total",
-			Help: "Total number of errors",
-		},
-		[]string{labelRequestDB, labelMethod},
-	)
-
-	requestsDbTotal = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "request_db_total",
-			Help: "The total number of requests on write to the database",
-		},
-		[]string{labelRequestDB, labelMethod},
-	)
 )
 
 func init() {
@@ -78,10 +44,6 @@ func init() {
 		db.Close()
 		return
 	}
-
-	prometheus.MustRegister(requestsDbTotal)
-	prometheus.MustRegister(errorsDBTotal)
-	prometheus.MustRegister(durationDB)
 }
 
 func main() {
@@ -114,17 +76,9 @@ func AddEntityHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	res.Body.Close()
 
-	p := "db.Exec"
-	m := "write"
-
-	requestsDbTotal.WithLabelValues(p, m).Inc()
-	t := time.Now()
-	_, err = db.Exec(sqlInsertEntity, r.FormValue("id"), r.FormValue("data"))
-	durationDB.WithLabelValues(p, m).Observe(time.Since(t).Seconds())
+	//_, err = db.Exec(sqlInsertEntity, r.FormValue("id"), r.FormValue("data"))
+	_, err = red.ExecDBmetrics(db, sqlInsertEntity, r.FormValue("id"), r.FormValue("data"))
 	if err != nil {
-		errorsDBTotal.
-			WithLabelValues(p, m).
-			Inc()
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -140,18 +94,9 @@ type ListEntityItemResponse struct {
 }
 
 func ListEntitiesHandler(w http.ResponseWriter, r *http.Request) {
-	t := time.Now()
-	p := "db.Query"
-	m := "read"
-
-	requestsDbTotal.WithLabelValues(p, m).Inc()
-
-	rr, err := db.Query(sqlSelectEntities)
-	durationDB.WithLabelValues(p, m).Observe(time.Since(t).Seconds())
+	//rr, err := db.Query(sqlSelectEntities)
+	rr, err := red.QueryDBmetrics(db, sqlSelectEntities)
 	if err != nil {
-		errorsDBTotal.
-			WithLabelValues(p, m).
-			Inc()
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

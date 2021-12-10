@@ -30,7 +30,7 @@ services:
 
   acl:
     container_name: svc2-acl
-    image: docker.io/aivlev/acl:v1.0.0
+    image: docker.io/aivlev/acl:v1.0.1
     build: .
     ports:
       - 8001:80
@@ -40,7 +40,7 @@ services:
 
   router:
     container_name: svc1-router
-    image: docker.io/aivlev/router:v1.0.1
+    image: docker.io/aivlev/router:v1.0.3
     build: .
     ports:
       - 8002:80
