@@ -5,10 +5,10 @@ import (
 )
 
 type User struct {
-	UserId int
-	Name   string
-	Age    int
-	Spouse int
+	UserId int    `db:"user_id"`
+	Name   string `db:"name"`
+	Age    int    `db:"age"`
+	Spouse int    `db:"spouse"`
 }
 
 func (u *User) connection() (*sql.DB, error) {
