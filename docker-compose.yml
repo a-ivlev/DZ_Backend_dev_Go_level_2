@@ -1,0 +1,106 @@
+version: "3.9"
+
+volumes:
+  mysql-db:
+  grafana-db:
+
+networks:
+  localnet:
+
+services:
+
+#  acl:
+#    container_name: svc2-acl
+#    build:
+#      dockerfile: svc2.Dockerfile
+#      context: .
+#    command: "./bin/acl"
+#    ports:
+#      - 8001:80
+#    networks:
+#      - localnet
+
+#  router:
+#    build:
+#      dockerfile: svc1.Dockerfile
+#      context: .
+##    command: "./bin/router"
+#    ports:
+#      - 8002:80
+
+  acl:
+    container_name: svc2-acl
+    image: docker.io/aivlev/acl:v1.0.1
+    build: .
+    ports:
+      - 8001:80
+    restart: always
+    networks:
+      - localnet
+
+  router:
+    container_name: svc1-router
+    image: docker.io/aivlev/router:v1.0.3
+    build: .
+    ports:
+      - 8002:80
+    depends_on:
+      - mysql
+      - acl
+    restart: always
+    networks:
+      - localnet
+
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test
+    volumes:
+      - mysql-db:/var/lib/mysql
+    ports:
+      - 8010:3306
+    restart: always
+    networks:
+      - localnet
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:6.4.4
+    environment:
+      - "GF_SECURITY_ADMIN_USER=admin"
+      - "GF_SECURITY_ADMIN_PASSWORD=password"
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-db:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: always
+    networks:
+      - localnet
+
+  node-exporter:
+    container_name: node-exporter
+    image: prom/node-exporter:v1.0.1
+    ports:
+      - 9100:9100
+    restart: always
+    networks:
+      - localnet
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.22.0
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+    ports:
+      - 9090:9090
+    depends_on:
+      - node-exporter
+      - acl
+      - router
+    restart: always
+    networks:
+      - localnet

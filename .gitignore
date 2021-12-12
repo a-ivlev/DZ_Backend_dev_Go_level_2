@@ -15,3 +15,8 @@
 # vendor/
 
 .idea/*
+.gitignore
+
+test_static/*
+spacecraft/*
+simple/*
