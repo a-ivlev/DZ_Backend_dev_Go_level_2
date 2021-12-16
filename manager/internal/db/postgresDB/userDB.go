@@ -12,11 +12,11 @@ type User struct {
 }
 
 func (u *User) connection() (*sql.DB, error) {
-	s, err := u.ShardById(u.UserId)
+	s, err := m.ShardById(u.UserId)
 	if err != nil {
 		return nil, err
 	}
-	return u.Connection(s.Address)
+	return p.Connection(s.Address)
 }
 
 func (u *User) Create() error {
