@@ -15,3 +15,6 @@
 # vendor/
 
 .idea/*
+catalogUsers/internal/logger/*
+catalogUsers/internal/metrics/*
+manager/*

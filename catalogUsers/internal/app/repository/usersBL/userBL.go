@@ -26,7 +26,7 @@ type UserStore interface {
 	CreateUser(user UserBL) (*UserBL, error)
 	ReadUser(id uuid.UUID) (*UserBL, error)
 	UpdateUser(user UserBL) (*UserBL, error)
-	DeleteUser(id uuid.UUID) (*UserBL, error)
+	DeleteUser(id uuid.UUID) error
 	SearchUserByName(userName string) (*UserBL, error)
 }
 

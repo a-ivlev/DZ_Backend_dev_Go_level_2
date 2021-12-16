@@ -30,12 +30,12 @@ func (c *Catalog) CreateUser(user usersBL.UserBL) (*usersBL.UserBL, error) {
 }
 
 func (c *Catalog) CreateGroupUser(groupUser groupUserBL.GroupUserBL) (*groupUserBL.GroupUserBL, error) {
-	createUser, err := c.groupStr.CreateGroupUser(groupUser)
+	userGroup, err := c.groupStr.CreateGroupUser(groupUser)
 	if err != nil {
 		return nil, fmt.Errorf("create user error: %w", err)
 	}
 
-	return createUser, nil
+	return userGroup, nil
 }
 
 func (c *Catalog) AddUserToGroup(idGroup uuid.UUID, user usersBL.UserBL) (*groupUserBL.GroupUserBL, error) {

@@ -23,7 +23,7 @@ type GroupUserStore interface {
 	CreateGroupUser(groupUser GroupUserBL) (*GroupUserBL, error)
 	ReadGroupUser(id uuid.UUID) (*GroupUserBL, error)
 	UpdateGroupUser(groupUser GroupUserBL) (*GroupUserBL, error)
-	DeleteGroupUser(id uuid.UUID) (*GroupUserBL, error)
+	DeleteGroupUser(id uuid.UUID) error
 	SearchGroupByName(nameGroup string) (*GroupUserBL, error)
 }
 
