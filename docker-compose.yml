@@ -1,0 +1,14 @@
+version: '3'
+services:
+  rmq:
+      # You can access it by visiting http://localhost:15672 in a browser with the default
+      # username and password of guest / guest
+      image: "rabbitmq:3-management"
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+      volumes:
+        - testrmq:/var/lib/rabbitmq
+
+volumes:
+  testrmq:

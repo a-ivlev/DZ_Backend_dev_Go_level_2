@@ -15,3 +15,6 @@
 # vendor/
 
 .idea/*
+spacecraft/*
+manager/logger/*
+catalogUsers/*
