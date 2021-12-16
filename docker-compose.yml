@@ -1,0 +1,145 @@
+version: "3.7"
+
+volumes:
+  master-db:
+  slave-db:
+  shard_0-db:
+  replica_0-db:
+  shard_1-db:
+  replica_1-db:
+  shard_2-db:
+  replica_2-db:
+
+networks:
+  localnet:
+
+services:
+
+  master:
+    image: docker.io/bitnami/postgresql:12.5.0
+    ports:
+      - 8081:5432
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=replicator
+      - POSTGRESQL_REPLICATION_PASSWORD=secret_password
+      - POSTGRESQL_USERNAME=test
+      - POSTGRESQL_PASSWORD=test
+      - POSTGRESQL_DATABASE=test
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - master-db
+
+  slave:
+    image: docker.io/bitnami/postgresql:12.5.0
+    ports:
+      - 8082:5432
+    depends_on:
+      - master
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=replicator
+      - POSTGRESQL_REPLICATION_PASSWORD=secret_password
+      - POSTGRESQL_MASTER_HOST=master
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - POSTGRESQL_PASSWORD=test
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - slave-db
+
+  shard_0:
+    image: docker.io/bitnami/postgresql:12.5.0
+    ports:
+      - 8100:5432
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=replicator
+      - POSTGRESQL_REPLICATION_PASSWORD=secret_password
+      - POSTGRESQL_USERNAME=test
+      - POSTGRESQL_PASSWORD=test
+      - POSTGRESQL_DATABASE=test
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - shard_0-db
+
+  replica_0:
+    image: docker.io/bitnami/postgresql:12.5.0
+    ports:
+      - 8101:5432
+    depends_on:
+      - shard_0
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=replicator
+      - POSTGRESQL_REPLICATION_PASSWORD=secret_password
+      - POSTGRESQL_MASTER_HOST=shard_0
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - POSTGRESQL_PASSWORD=test
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - replica_0-db
+
+  shard_1:
+    image: docker.io/bitnami/postgresql:12.5.0
+    ports:
+      - 8110:5432
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=replicator
+      - POSTGRESQL_REPLICATION_PASSWORD=secret_password
+      - POSTGRESQL_USERNAME=test
+      - POSTGRESQL_PASSWORD=test
+      - POSTGRESQL_DATABASE=test
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - shard_1-db
+
+  replica_1:
+    image: docker.io/bitnami/postgresql:12.5.0
+    ports:
+      - 8111:5432
+    depends_on:
+      - shard_1
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=replicator
+      - POSTGRESQL_REPLICATION_PASSWORD=secret_password
+      - POSTGRESQL_MASTER_HOST=shard_1
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - POSTGRESQL_PASSWORD=test
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - replica_1-db
+
+  shard_2:
+    image: docker.io/bitnami/postgresql:12.5.0
+    ports:
+      - 8120:5432
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=replicator
+      - POSTGRESQL_REPLICATION_PASSWORD=secret_password
+      - POSTGRESQL_USERNAME=test
+      - POSTGRESQL_PASSWORD=test
+      - POSTGRESQL_DATABASE=test
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - shard_2-db
+
+  replica_2:
+    image: docker.io/bitnami/postgresql:12.5.0
+    ports:
+      - 8121:5432
+    depends_on:
+      - shard_2
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=replicator
+      - POSTGRESQL_REPLICATION_PASSWORD=secret_password
+      - POSTGRESQL_MASTER_HOST=shard_2
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - POSTGRESQL_PASSWORD=test
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - replica_2-db
+  
