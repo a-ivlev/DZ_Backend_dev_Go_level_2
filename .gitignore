@@ -18,3 +18,4 @@
 spacecraft/*
 manager/logger/*
 catalogUsers/*
+migrate/*
