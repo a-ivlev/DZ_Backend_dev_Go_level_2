@@ -1,0 +1,16 @@
+version: "3.9"
+
+networks:
+  localnet:
+
+services:
+
+  redis:
+    container_name: redisDB-db
+    image: docker.io/redis:6.2.6
+    ports:
+      - 6379:6379
+    restart: always
+    networks:
+      - localnet
+
