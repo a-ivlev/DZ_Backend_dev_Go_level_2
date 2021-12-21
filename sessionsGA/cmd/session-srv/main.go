@@ -25,10 +25,6 @@ func main() {
 	sc := sessions.NewSessionCache(client)
 	r := handlers.NewRouter(sc, ttl)
 
-	//http.HandleFunc("/", client.RootHandler)
-	//http.HandleFunc("/login", client.LoginHandler)
-	//http.HandleFunc("/logout", client.LogoutHandler)
-
 	log.Printf("starting server at :%s", servicePort)
 	log.Fatal(http.ListenAndServe(":"+servicePort, r))
 }

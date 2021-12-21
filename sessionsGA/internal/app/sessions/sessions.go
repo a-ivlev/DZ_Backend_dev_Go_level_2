@@ -78,3 +78,24 @@ func (sc *SessionCache) Delete(in SessionID) error {
 	}
 	return nil
 }
+
+func (sc *SessionCache) SetCache(key string, value []byte) error {
+	err := sc.cache.SetCache(key, value)
+	if err != nil {
+		return fmt.Errorf("redis: set key %q: %w", key, err)
+	}
+
+	return nil
+}
+
+func (sc *SessionCache) GetRecordCache(key string) ([]byte, error) {
+	data, err := sc.cache.GetRecordCache(key)
+	if err != nil {
+		return nil, fmt.Errorf("redis: get record by key %q: %w", key, err)
+	} else if data == nil {
+		// add here custom err handling
+		return nil, nil
+	}
+
+	return data, nil
+}
