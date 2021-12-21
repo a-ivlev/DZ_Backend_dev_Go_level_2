@@ -24,15 +24,6 @@ func FetchContent(url string) (*RSS, error) {
 	}
 
 	defer resp.Body.Close()
-	//body, err := ioutil.ReadAll(resp.Body)
-	//if err != nil {
-	//	return nil, fmt.Errorf("read response body: %w", err)
-	//}
-	//rss := new(RSS)
-	//err = xml.Unmarshal(body, rss)
-	//if err != nil {
-	//	return nil, fmt.Errorf("unmarshal body: %w", err)
-	//}
 
 	rss := new(RSS)
 	if err = xml.NewDecoder(resp.Body).Decode(&rss); err != nil {
@@ -41,3 +32,30 @@ func FetchContent(url string) (*RSS, error) {
 
 	return rss, nil
 }
+
+//type List struct {
+//	Items []Tags
+//}
+//
+//type Tags struct {
+//	URL      string
+//	Title    string
+//	Category []string
+//}
+//
+//// обновление кеша по одному листу, например, по go через представление List
+//func FetchContent(url string) (*List, error) {
+//	fmt.Printf("fetching: %s\n", url)
+//	resp, err := http.Get(url)
+//	if err != nil {
+//		return nil, fmt.Errorf("HTTP GET for URL %s: %w", url, err)
+//	}
+//	defer resp.Body.Close()
+//
+//	list := new(List)
+//	if err = xml.NewDecoder(resp.Body).Decode(&list); err != nil {
+//		return nil, fmt.Errorf("unmarshal body: %w", err)
+//	}
+//
+//	return list, nil
+//}

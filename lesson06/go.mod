@@ -1,4 +1,4 @@
-module session-srv
+module lesson06
 
 go 1.17
 

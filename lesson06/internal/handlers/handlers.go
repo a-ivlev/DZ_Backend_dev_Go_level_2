@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"lesson06/internal/app/sessions"
 	"log"
 	"net/http"
-	"session-srv/internal/app/sessions"
 	"strings"
 	"time"
 
@@ -98,7 +98,7 @@ func (rt *Router) checkSession(r *http.Request) (*sessions.Session, error) {
 
 	sess, err := rt.sc.Check(sessions.SessionID{ID: cookieSessionID.Value})
 	if err != nil {
-		return nil, fmt.Errorf("check session value %q: %w", cookieSessionID.Value,
+		return nil, fmt.Errorf("check sessions value %q: %w", cookieSessionID.Value,
 			err)
 	}
 	return sess, nil
@@ -107,7 +107,7 @@ func (rt *Router) checkSession(r *http.Request) (*sessions.Session, error) {
 func (rt *Router) RootHandler(w http.ResponseWriter, r *http.Request) {
 	sess, err := rt.checkSession(r)
 	if err != nil {
-		err = fmt.Errorf("check session: %w", err)
+		err = fmt.Errorf("check sessions: %w", err)
 		log.Printf("[ERR] %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -182,7 +182,7 @@ func (rt *Router) CreateHandler(w http.ResponseWriter, r *http.Request) {
 		Useragent: r.UserAgent(),
 	})
 	if err != nil {
-		err = fmt.Errorf("create session: %w", err)
+		err = fmt.Errorf("create sessions: %w", err)
 		log.Printf("[ERR] %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -215,7 +215,7 @@ func (rt *Router) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Useragent: r.UserAgent(),
 	})
 	if err != nil {
-		err = fmt.Errorf("create session: %w", err)
+		err = fmt.Errorf("create sessions: %w", err)
 		log.Printf("[ERR] %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -243,7 +243,7 @@ func (rt *Router) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = rt.sc.Delete(sessions.SessionID{ID: session.Value})
 	if err != nil {
-		err = fmt.Errorf("delete session value %q: %w", session.Value, err)
+		err = fmt.Errorf("delete sessions value %q: %w", session.Value, err)
 		log.Printf("[ERR] %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

@@ -39,7 +39,7 @@ func newRedisKey(sessionID string) string {
 func (sc *SessionCache) Create(in Session) (*SessionID, error) {
 	data, err := json.Marshal(in)
 	if err != nil {
-		return nil, fmt.Errorf("marshal session ID: %w", err)
+		return nil, fmt.Errorf("marshal sessions ID: %w", err)
 	}
 	id := SessionID{
 		ID: uuid.New().String(),
@@ -65,7 +65,7 @@ func (sc *SessionCache) Check(in SessionID) (*Session, error) {
 	sess := new(Session)
 	err = json.Unmarshal(data, sess)
 	if err != nil {
-		return nil, fmt.Errorf("unmarshal to session info: %w", err)
+		return nil, fmt.Errorf("unmarshal to sessions info: %w", err)
 	}
 	return sess, nil
 }
