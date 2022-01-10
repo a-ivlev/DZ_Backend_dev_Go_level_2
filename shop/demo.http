@@ -1,0 +1,113 @@
+###
+PUT http://localhost:8000/item
+Content-Type: application/json
+
+{
+  "name": "test",
+  "price": 10
+}
+
+###
+PUT http://localhost:8000/item
+Content-Type: application/json
+
+{
+  "name": "test-2",
+  "price": 11
+}
+
+###
+PUT http://localhost:8000/item
+Content-Type: application/json
+
+{
+  "name": "test-3",
+  "price": 15
+}
+
+###
+POST http://localhost:8000/items
+
+###
+POST http://localhost:8000/item/25405eb2-d939-4ead-bc50-3c52f6bf047c
+
+###
+POST http://localhost:8000/item/86339750-2e10-4ef3-a8d2-84544d917ca9
+
+
+###
+PUT http://localhost:8000/item/25405eb2-d939-4ead-bc50-3c52f6bf047c
+Content-Type: application/json
+
+{
+  "name": "test-1.1",
+  "price": 9
+}
+
+
+###
+PUT http://localhost:8000/item/6b09509b-3343-4f61-afed-d58698fa7583
+Content-Type: application/json
+
+{
+  "name": "test-2.1",
+  "price": 12
+}
+
+
+###
+PUT http://localhost:8000/item
+Content-Type: application/json
+
+{
+  "name": "test-4",
+  "price": 4
+}
+
+###
+PUT http://localhost:8000/item
+Content-Type: application/json
+
+{
+  "name": "test-5",
+  "price": 15
+}
+
+###
+PUT http://localhost:8000/item
+Content-Type: application/json
+
+{
+  "name": "test-6",
+  "price": 6
+}
+
+###
+PUT http://localhost:8000/item
+Content-Type: application/json
+
+{
+  "name": "new name item-7",
+  "price": 17
+}
+
+###
+POST http://localhost:8000/search/1.1
+
+###
+DELETE http://localhost:8000/item/690f1320-6e1d-4a0d-ac7e-6bce7af22716
+
+###
+POST http://localhost:8000/items
+
+###
+PUT http://localhost:8000/item
+Content-Type: application/json
+
+{
+  "name": "new name item-8",
+  "price": 28
+}
+
+###
+POST http://localhost:8000/item/97d93fd4-d250-4f3f-b190-56ee0a62f565

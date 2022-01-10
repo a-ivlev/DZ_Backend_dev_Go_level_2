@@ -1,4 +1,4 @@
-module spacecraft
+module simple
 
 go 1.17
 
